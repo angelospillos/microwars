@@ -13,6 +13,8 @@ Each of the attack endpoints (jab, cross, hook, uppercut) will also initiate req
 Just returns "OK" and HTTP status code 200.
 ### /test
 Will initiate a GET to the /status endpoint of the opponent - just to verify connectivity of the two opponents.
+### /combat
+Will start the combat, by sending a jab and hook request to the opponent.
 
 ### /jab
 Returns "hello world".
