@@ -1,5 +1,5 @@
 {
-  "name": "microwars-sollip",
+  "name": "@microwars/sollip",
   "version": "1.0.0",
   "description": "Player Sollip made in nodejs!",
   "main": "sollip.js",
