@@ -1,0 +1,11 @@
+{
+  "name": "microwars-sollip",
+  "version": "1.0.0",
+  "description": "Player Sollip made in nodejs!",
+  "main": "sollip.js",
+  "author": "Angelos Pillos",
+  "license": "MIT",
+  "dependencies": {
+    "uuid-random": "^1.3.0"
+  }
+}
