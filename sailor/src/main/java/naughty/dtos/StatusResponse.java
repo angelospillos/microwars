@@ -1,5 +1,8 @@
 package naughty.dtos;
 
+import io.micronaut.core.annotation.Introspected;
+
+@Introspected
 public class StatusResponse {
     private String status = "ok";
 
