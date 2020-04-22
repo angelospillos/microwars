@@ -1,0 +1,14 @@
+name: turkish_delight
+version: 0.1.0
+
+targets:
+  turkish_delight:
+    main: src/turkish_delight.cr
+
+crystal: 0.34.0
+
+license: MIT
+
+dependencies:
+  kemal:
+    github: kemalcr/kemal
