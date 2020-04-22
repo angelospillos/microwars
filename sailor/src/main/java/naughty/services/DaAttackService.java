@@ -41,7 +41,7 @@ public class DaAttackService {
     private void attack(final HttpRequest<?> request) {
         opponentClient
                 .retrieve(request)
-                .timeout(4, TimeUnit.MILLISECONDS)
+                .timeout(4, TimeUnit.SECONDS)
                 .doOnError((error) -> {
                     if (error instanceof TimeoutException) {
                         log.error("TIMEOUT! WON", error);
