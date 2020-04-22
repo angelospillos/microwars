@@ -1,3 +1,14 @@
 micronaut:
   application:
     name: sailor
+    port: 8000
+  http:
+    services:
+      opponent:
+        urls:
+          - 'https://enqfc8y2t9fo.x.pipedream.net'
+        read-timeout: 4s
+        read-idle-timeout: 1s
+      referee:
+        urls:
+          - 'https://enqfc8y2t9fo.x.pipedream.net'
