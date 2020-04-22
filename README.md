@@ -17,13 +17,13 @@ Will initiate a GET to the /status endpoint of the opponent - just to verify con
 Will start the combat, by sending a jab and hook request to the opponent.
 
 ### /jab
-Returns "hello world".
+Returns a newly generated GUID along with the result of FIB(2)
 ### /cross
-Returns a new GUID.
+Returns a newly generated GUID along with the result of FIB(4)
 ### /hook
-Creates a new GUID. Writes it in a file. Returns the GUID.
+Returns a newly generated GUID along with the result of FIB(8)
 ### /uppercut
-Calculate the 1000th element of the fibonacci sequence, store it in a file and then return it.
+Returns a newly generated GUID along with the result of FIB(16)
 
 ## Combos
 ### jab
@@ -34,3 +34,10 @@ Respond with jab, jab, cross
 Respond with hook, hook, uppercut
 ### uppercut
 Respond with cross, hook, uppercut
+
+## Rules
+A strict timeout of 4s will be imposed; if a service's request is not served within 4s, the requesting process should exit, logging at the same time that they are the winner.
+E.g.
+- service A sends a jab to Service B
+- service A does not receive a response within 4s
+- service A logs that they are the winner and exits
