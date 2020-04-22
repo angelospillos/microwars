@@ -11,7 +11,5 @@ if (cluster.isMaster) {
     console.log('worker ' + worker.process.pid + ' died');
   });
 } else {
-
-    //change this line to Your Node.js app entry point.
     require("./sollipV2.js");
 }
