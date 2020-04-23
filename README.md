@@ -13,6 +13,7 @@ Each of the attack endpoints (jab, cross, hook, uppercut) will also initiate req
 Just returns "OK" and HTTP status code 200.
 ### /test
 Will initiate a GET to the /status endpoint of the opponent - just to verify connectivity of the two opponents.
+Will also initiate a GET to the / endpoint of the referee - just to verify connectivity between itself and the referee.
 ### /combat
 Will start the combat, by sending a jab and hook request to the opponent.
 
@@ -49,11 +50,16 @@ Meaning that first the response should be send back, before sending the attack r
 All responses should be JSON, just because.
 
 Status response should be something like:
+```
 { status: "ok" }
-
+```
 Combat responses (jab, cross, hook, uppercut) should be:
-{ uuid: "08f5bbc2-4a6a-45fb-9c98-05068ba6560d", fib: 5 }
-
+```
+{
+  uuid: "08f5bbc2-4a6a-45fb-9c98-05068ba6560d",
+  fib: 5
+}
+```
 Test and combat should just be empty responses with 200 http code (unless there is something wrong).
 
 ### Timeout
@@ -61,4 +67,12 @@ A strict timeout of 4s will be imposed; if a service's request is not served wit
 E.g.
 - service A sends a jab to Service B
 - service A does not receive a response within 4s
-- service A logs that they are the winner and exits
+- service A sends a won message to the referee
+
+The winning message will have the format:
+```
+{
+  name: "service name",
+  date: timestamp
+}
+```

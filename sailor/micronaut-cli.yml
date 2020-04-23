@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: naughty
+---
+testFramework: junit
+sourceLanguage: java
