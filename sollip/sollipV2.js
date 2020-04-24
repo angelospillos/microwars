@@ -32,7 +32,7 @@ require('uWebSockets.js').App()
   })
   .get("/work", (res, req) => {
     res.statusCode = 200;
-    res.write(`{ "uuid": "${uuid.v4()}", "fib": "${fib(8)}" }`);
+    res.write(`{ "uuid": "${uuid.v4()}", "fib": "${fib(16)}" }`);
     res.end();
   })
   .get(combatPath, (res, req) => {
