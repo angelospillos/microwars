@@ -74,4 +74,9 @@ public class DaController {
         return attackResult;
 
     }
+
+    @Get("/warmup")
+    public AttackResult warmup() {
+        return daDefenceService.getAttackResult(16);
+    }
 }
