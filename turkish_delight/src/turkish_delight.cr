@@ -123,4 +123,10 @@ get "/uppercut" do |env|
   attack_response(16)
 end
 
+get "/warmup" do |env|
+  env.response.content_type = "application/json"
+  
+  attack_response(16)
+end
+
 Kemal.run
