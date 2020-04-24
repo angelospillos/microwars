@@ -15,6 +15,7 @@ const crossPath = '/cross';
 const hookPath = '/hook';
 const uppercutPath = '/uppercut';
 
+const DEFAULT_RESP = '{ "status": "ok" }';
 const TIMEOUT = parseInt(process.env.TIMEOUT, 10) || 4000;
 const opponentAddr = process.env.OPPONENT_ADDR || '127.0.0.1';
 
@@ -68,7 +69,7 @@ require('uWebSockets.js').App()
   })
   .get("/work", (res, req) => {
     res.statusCode = 200;
-    res.write(`{ "uuid": "${uuid.v4()}", "fib": "${fibonator.fibrec(8)}" }`);
+    res.write(`{ "uuid": "${uuid.v4()}", "fib": "${fibonator.fibrec(16)}" }`);
     res.end();
   })
   .get(testPath, (res, req) => {
@@ -90,6 +91,9 @@ require('uWebSockets.js').App()
     uppercut(req, res);
   })
   .any('/*', (res, req) => {
+    res.statusCode = 404;
+    res.writeHeader('Content-Type', 'application/json');
+    res.write('{ "status": "not_found" }');
     res.end();
   })
   .listen(serverPort, (token) => {
@@ -102,33 +106,38 @@ require('uWebSockets.js').App()
 
 async function ok(req, res) {
   res.statusCode = 200;
-  res.writeHeader('Content-Type', 'application/json');
-  res.write('{ "status": "ok" }');
+  res.write(DEFAULT_RESP);
   res.end();
 }
 
 async function test(req, res) {
   executeOpponentStatus();
+  res.statusCode = 200;
+  res.write(DEFAULT_RESP);
+  res.end();
 }
 
 async function combat(req, res) {
   executeOpponentJab();
   executeOpponentHook();
+  res.statusCode = 200;
+  res.write(DEFAULT_RESP);
+  res.end();
 }
 
 async function jab(req, res) {
-  res.statusCode = 200;
   // no gains from native function on less than fib(8)
-  res.write(`{ "uuid": "${uuid.v4()}", "fib": "${slowfib(2)}" }`);
+  res.statusCode = 200;
+  res.write(`{ "uuid": "${uuid.v4()}", "fib": ${slowfib(2)} }`);
   res.end();
   executeOpponentJab();
   executeOpponentJab();
 }
 
 async function cross(req, res) {
-  res.statusCode = 200;
   // no gains from native function on less than fib(8)
-  res.write(`{ "uuid": "${uuid.v4()}", "fib": "${slowfib(4)}" }`);
+  res.statusCode = 200;
+  res.write(`{ "uuid": "${uuid.v4()}", "fib": ${slowfib(4)} }`);
   res.end();
   executeOpponentJab();
   executeOpponentJab();
@@ -136,11 +145,9 @@ async function cross(req, res) {
 }
 
 async function hook(req, res) {
-  let uuid = uuid();
-  res.statusCode = 200;
   // no gains from native function on less than fib(8)
-  // res.write(`{ "uuid": "${uuid.v4()}", "fib": "${slowfib(8)}" }`);
-  res.write(`{ "uuid": "${uuid.v4()}", "fib": "${fibonator.fibrec(8)}" }`);
+  res.statusCode = 200;
+  res.write(`{ "uuid": "${uuid.v4()}", "fib": ${slowfib(8)} }`);
   res.end();
   executeOpponentHook();
   executeOpponentHook();
@@ -148,12 +155,9 @@ async function hook(req, res) {
 }
 
 async function uppercut(req, res) {
-  fib(20).then((fibonacci) => {
-    res.statusCode = 200;
-    res.write(`{ "uuid": "${uuid.v4()}", "fib": "${fibonator.fibrec(16)}" }`);
-    res.end();
-    log(fibonacci);
-  });
+  res.statusCode = 200;
+  res.write(`{ "uuid": "${uuid.v4()}", "fib": ${fibonator.fibrec(16)} }`);
+  res.end();
   executeOpponentCross();
   executeOpponentHook();
   executeOpponentUppercut();
@@ -195,7 +199,7 @@ async function executeOpponentUppercut() {
 }
 
 async function log(message) {
-  serverLog.write(message);
+  serverLog.write(`${message}\n`, () => { });
 }
 
 function slowfib(n) {
