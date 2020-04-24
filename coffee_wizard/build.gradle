@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id "application"
+    id "com.github.johnrengelman.shadow" version "5.2.0"
 }
 
 group 'hell.microwars'
@@ -11,6 +13,26 @@ repositories {
     mavenCentral()
 }
 
+mainClassName = "hell.microwars.CoffeeWizard"
+
+configurations {
+    // for dependencies that are needed for development only
+    developmentOnly
+}
+
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile 'com.wizzardo:http:0.2+'
+}
+
+shadowJar {
+    mergeServiceFiles()
+}
+
+tasks.withType(JavaExec) {
+    classpath += configurations.developmentOnly
+    jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote')
+}
+tasks.withType(JavaCompile){
+    options.encoding = "UTF-8"
+    options.compilerArgs.add('-parameters')
 }
