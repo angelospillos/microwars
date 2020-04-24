@@ -4,8 +4,6 @@ plugins {
     id "net.ltgt.apt-eclipse" version "0.21"
 }
 
-
-
 version "0.1"
 group "naughty"
 
