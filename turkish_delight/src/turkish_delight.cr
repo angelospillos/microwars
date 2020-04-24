@@ -7,10 +7,10 @@ logging false
 
 lib CONSTANTS
   STATUS_RESPONSE = {"status": "ok"}.to_json
-  REFEREE_URL = "enqfc8y2t9fo.x.pipedream.net"
+  REFEREE_URL = ENV["REFEREE_URL"]
   REFEREE_WON_URL = REFEREE_URL + "/won"
 
-  OPPONENT_URL = "enqfc8y2t9fo.x.pipedream.net"
+  OPPONENT_URL = ENV["OPPONENT_URL"]
   OPPONENT_STATUS_URL = OPPONENT_URL + "/status"
   OPPONENT_JAB_PATH = "/jab"
   OPPONENT_CROSS_PATH = "/cross"
@@ -20,9 +20,17 @@ lib CONSTANTS
   OPPONENT_HTTP_CLIENT = HTTP::Client.new OPPONENT_URL
 end
 
+CONSTANTS::OPPONENT_HTTP_CLIENT.connect_timeout = 4.seconds
+
 def attack(path : String)
   spawn do
-    CONSTANTS::OPPONENT_HTTP_CLIENT.get(path)
+    begin
+      CONSTANTS::OPPONENT_HTTP_CLIENT.get(path)
+    rescue ex : IO::TimeoutError
+      notify_referee_won
+      puts "TIMEOUT! WON"
+      puts ex
+    end
   end
 end
 
@@ -43,7 +51,7 @@ def attack_uppercut
 end
 
 def notify_referee_won
-  HTTP::Client.post(CONSTANTS::REFEREE_WON_URL, body: { name: "Turkish Delight", date: Time.new }.to_json)
+  HTTP::Client.post(CONSTANTS::REFEREE_WON_URL, body: { name: "Turkish Delight", date: Time.utc }.to_json)
 end
 
 def fibonacci(fib_number : Int32)
