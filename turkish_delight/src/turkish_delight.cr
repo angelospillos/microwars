@@ -4,14 +4,19 @@ require "uuid/json"
 require "http/client"
 
 logging false
+Kemal.config do |cfg|
+  cfg.env = "production"
+  cfg.serve_static = false
+  cfg.logging = false
+end
 
 lib CONSTANTS
   STATUS_RESPONSE = {"status": "ok"}.to_json
   REFEREE_URL = ENV["REFEREE_URL"]
   REFEREE_WON_URL = REFEREE_URL + "/won"
 
-  OPPONENT_URL = ENV["OPPONENT_URL"]
-  OPPONENT_STATUS_URL = OPPONENT_URL + "/status"
+  OPPONENT_URL = URI.parse(ENV["OPPONENT_URL"])
+  OPPONENT_STATUS_URL = URI.parse(ENV["OPPONENT_URL"] + "/status")
   OPPONENT_JAB_PATH = "/jab"
   OPPONENT_CROSS_PATH = "/cross"
   OPPONENT_HOOK_PATH = "/hook"
@@ -125,8 +130,17 @@ end
 
 get "/warmup" do |env|
   env.response.content_type = "application/json"
-  
+
   attack_response(16)
 end
 
-Kemal.run
+System.cpu_count.times do |i|
+  Process.fork do
+    Kemal.run do |config|
+      server = config.server.not_nil!
+      server.bind_tcp "0.0.0.0", 3000, reuse_port: true
+    end
+  end
+end
+
+sleep
