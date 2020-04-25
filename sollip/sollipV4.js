@@ -21,7 +21,7 @@ const TIMEOUT = parseInt(process.env.TIMEOUT, 10) || 4000;
 const opponentAddr = process.env.OPPONENT_ADDR || '127.0.0.1';
 
 const refereeStatusRequest = {
-  host: 'https://enqfc8y2t9fo.x.pipedream.net',
+  host: 'http://enqfc8y2t9fo.x.pipedream.net',
   port: 80,
   method: 'GET',
   path: '',
