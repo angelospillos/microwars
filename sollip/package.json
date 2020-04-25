@@ -1,9 +1,9 @@
 {
   "name": "@microwars/sollip",
-  "version": "1.0.0",
+  "version": "5.0.0",
   "description": "Player Sollip made in nodejs!",
-  "main": "sollip.js",
-  "author": "Angelos Pillos",
+  "main": "sollipV5.js",
+  "author": "Angelos Pillos & Yavor Shapashov",
   "license": "MIT",
   "dependencies": {
     "fibonator": "git+ssh://git@github.com/yavosh/fibonator.git",
