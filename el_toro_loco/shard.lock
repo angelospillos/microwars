@@ -1,0 +1,10 @@
+version: 1.0
+shards:
+  seg:
+    github: soveran/seg
+    commit: 8580a8b398300ad58088ff71c061515cf4be5149
+
+  toro:
+    github: soveran/toro
+    commit: 7b3bd27b99acc2b9e3ce721391e85f3fcab3207f
+
