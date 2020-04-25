@@ -1,8 +1,10 @@
+const http = require('http');
 const uuid = require('uuid');
 const fs = require('fs');
+const fibonator = require('fibonator');
 
 const serverHostname = '127.0.0.1';
-const serverPort = 3000;
+const serverPort = 8000;
 const serverLog = fs.createWriteStream('log.txt', { flags: 'a' });
 
 const statusPath = '/status';
@@ -13,27 +15,65 @@ const crossPath = '/cross';
 const hookPath = '/hook';
 const uppercutPath = '/uppercut';
 
-const opponentUrl = 'http://127.0.0.1:3001'
-const opponentStatusUrl = opponentUrl + statusPath;
-const opponentJabUrl = opponentUrl + jabPath;
-const opponentCrossUrl = opponentUrl + crossPath;
-const opponentHookUrl = opponentUrl + hookPath;
-const opponentUppercutUrl = opponentUrl + uppercutPath;
+const DEFAULT_RESP = '{ "status": "ok" }';
+const TIMEOUT = parseInt(process.env.TIMEOUT, 10) || 4000;
+const opponentAddr = process.env.OPPONENT_ADDR || '127.0.0.1';
+
+const opponentStatusRequest = {
+  host: opponentAddr,
+  port: 8000,
+  method: 'GET',
+  path: statusPath,
+  timeout: TIMEOUT,
+}
+
+const opponentJabRequest = {
+  host: opponentAddr,
+  port: 8000,
+  method: 'GET',
+  path: jabPath,
+  timeout: TIMEOUT,
+}
+
+const opponentCrossRequest = {
+  host: opponentAddr,
+  port: 8000,
+  method: 'GET',
+  path: crossPath,
+  timeout: TIMEOUT,
+}
+const opponentHookRequest = {
+  host: opponentAddr,
+  port: 8000,
+  method: 'GET',
+  path: hookPath,
+  timeout: TIMEOUT,
+}
+
+const opponentUppercutRequest = {
+  host: opponentAddr,
+  port: 8000,
+  method: 'GET',
+  path: uppercutPath,
+  timeout: TIMEOUT,
+}
 
 // warmup the engine 
-fib(8);
+slowfib(8);
+fibonator.fib(8);
+fibonator.fibrec(8);
 
 require('uWebSockets.js').App()
   .get(statusPath, (res, req) => {
     ok(req, res);
   })
-  .get(testPath, (res, req) => {
-    test(req, res);
-  })
   .get("/work", (res, req) => {
     res.statusCode = 200;
-    res.write(`{ "uuid": "${uuid.v4()}", "fib": "${fib(16)}" }`);
+    res.write(`{ "uuid": "${uuid.v4()}", "fib": "${fibonator.fibrec(16)}" }`);
     res.end();
+  })
+  .get(testPath, (res, req) => {
+    test(req, res);
   })
   .get(combatPath, (res, req) => {
     combat(req, res);
@@ -51,6 +91,9 @@ require('uWebSockets.js').App()
     uppercut(req, res);
   })
   .any('/*', (res, req) => {
+    res.statusCode = 404;
+    res.writeHeader('Content-Type', 'application/json');
+    res.write('{ "status": "not_found" }');
     res.end();
   })
   .listen(serverPort, (token) => {
@@ -63,139 +106,103 @@ require('uWebSockets.js').App()
 
 async function ok(req, res) {
   res.statusCode = 200;
-  res.writeHeader('Content-Type', 'application/json');
-  res.write('{ "status": "ok" }');
+  res.write(DEFAULT_RESP);
   res.end();
 }
 
 async function test(req, res) {
   executeOpponentStatus();
+  res.statusCode = 200;
+  res.write(DEFAULT_RESP);
+  res.end();
 }
 
 async function combat(req, res) {
   executeOpponentJab();
   executeOpponentHook();
+  res.statusCode = 200;
+  res.write(DEFAULT_RESP);
+  res.end();
 }
 
 async function jab(req, res) {
+  // no gains from native function on less than fib(8)
   res.statusCode = 200;
-  res.setHeader('Content-Type', 'application/json');
-  res.write('{ "message": "Hello World" }');
+  res.write(`{ "uuid": "${uuid.v4()}", "fib": ${slowfib(2)} }`);
   res.end();
   executeOpponentJab();
   executeOpponentJab();
 }
 
 async function cross(req, res) {
-  let uuid = uuid.v4();
+  // no gains from native function on less than fib(8)
   res.statusCode = 200;
-  res.setHeader('Content-Type', 'application/json');
-  res.write('{ "uuid": "' + uuid + '" }');
+  res.write(`{ "uuid": "${uuid.v4()}", "fib": ${slowfib(4)} }`);
   res.end();
   executeOpponentJab();
   executeOpponentJab();
   executeOpponentCross();
-  log(uuid);
 }
 
 async function hook(req, res) {
-  let uuid = uuid();
+  // no gains from native function on less than fib(8)
   res.statusCode = 200;
-  res.setHeader('Content-Type', 'application/json');
-  res.write('{ "uuid": "' + uuid + '" }');
+  res.write(`{ "uuid": "${uuid.v4()}", "fib": ${slowfib(8)} }`);
   res.end();
   executeOpponentHook();
   executeOpponentHook();
   executeOpponentUppercut();
-  log(uuid);
 }
 
 async function uppercut(req, res) {
   res.statusCode = 200;
-  res.setHeader('Content-Type', 'application/json');
-  res.write('{ "fibonacci": "' + fib(20) + '" }');
+  res.write(`{ "uuid": "${uuid.v4()}", "fib": ${fibonator.fibrec(16)} }`);
   res.end();
-  log(fibonacci);
   executeOpponentCross();
   executeOpponentHook();
   executeOpponentUppercut();
 }
 
 async function executeOpponentStatus() {
-  http.get(opponentStatusUrl, (response) => {
-    let data = '';
-    response.on('data', (chunk) => {
-      data += chunk;
-    });
-    response.on('end', () => {
-      log(data);
-    });
+  http.get(opponentStatusRequest, (response) => {
   }).on("error", (error) => {
     log("Error: " + error.message);
   });
 }
 
 async function executeOpponentJab() {
-  http.get(opponentJabUrl, (response) => {
-    let data = '';
-    response.on('data', (chunk) => {
-      data += chunk;
-    });
-    response.on('end', () => {
-      log(data);
-    });
+  http.get(opponentJabRequest, (response) => {
   }).on("error", (error) => {
     log("Error: " + error.message);
   });
 }
 
 async function executeOpponentCross() {
-  http.get(opponentCrossUrl, (response) => {
-    let data = '';
-    response.on('data', (chunk) => {
-      data += chunk;
-    });
-    response.on('end', () => {
-      log(data);
-    });
+  http.get(opponentCrossRequest, (response) => {
   }).on("error", (error) => {
     log("Error: " + error.message);
   });
 }
 
 async function executeOpponentHook() {
-  http.get(opponentHookUrl, (response) => {
-    let data = '';
-    response.on('data', (chunk) => {
-      data += chunk;
-    });
-    response.on('end', () => {
-      log(data);
-    });
+  http.get(opponentHookRequest, (response) => {
   }).on("error", (error) => {
     log("Error: " + error.message);
   });
 }
 
 async function executeOpponentUppercut() {
-  http.get(opponentUppercutUrl, (response) => {
-    let data = '';
-    response.on('data', (chunk) => {
-      data += chunk;
-    });
-    response.on('end', () => {
-      log(data);
-    });
+  http.get(opponentUppercutRequest, (response) => {
   }).on("error", (error) => {
     log("Error: " + error.message);
   });
 }
 
 async function log(message) {
-  serverLog.write(message);
+  serverLog.write(`${message}\n`, () => { });
 }
 
-function fib(n) {
+function slowfib(n) {
   if (n <= 1) return n;
-  return fib(n - 1) + fib(n - 2);
+  return slowfib(n - 1) + slowfib(n - 2);
 }
