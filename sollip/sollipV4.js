@@ -2,6 +2,7 @@ const http = require('http');
 const uuid = require('uuid');
 const fs = require('fs');
 const fibonator = require('fibonator');
+const querystring = require('querystring');
 
 const serverHostname = '127.0.0.1';
 const serverPort = 8000;
