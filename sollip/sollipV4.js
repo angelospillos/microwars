@@ -19,6 +19,22 @@ const DEFAULT_RESP = '{ "status": "ok" }';
 const TIMEOUT = parseInt(process.env.TIMEOUT, 10) || 4000;
 const opponentAddr = process.env.OPPONENT_ADDR || '127.0.0.1';
 
+const refereeStatusData = querystring.stringify({
+  'msg': 'Solip V5 Won!'
+});
+
+const refereeStatusRequest = {
+  host: 'https://enqfc8y2t9fo.x.pipedream.net',
+  port: 80,
+  method: 'POST',
+  path: '',
+  timeout: TIMEOUT,
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'Content-Length': Buffer.byteLength(refereeStatusData)
+  }
+}
+
 const opponentStatusRequest = {
   host: opponentAddr,
   port: 8000,
@@ -199,7 +215,11 @@ async function executeOpponentUppercut() {
 }
 
 async function log(message) {
-  serverLog.write(`${message}\n`, () => { });
+  serverLog.write(`${message}\n`, () => { 
+    const req = http.request(options, (res) => {});
+    req.write(refereeStatusData);
+    req.end();
+  });
 }
 
 function slowfib(n) {
