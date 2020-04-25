@@ -34,7 +34,7 @@ const refereeCheckRequest = {
   host: 'enqfc8y2t9fo.x.pipedream.net',
   port: 80,
   method: 'GET',
-  path: '/introduce',
+  path: '/warmup',
   timeout: TIMEOUT,
   headers: {
     'user-agent': 'sollipV5',
@@ -90,10 +90,6 @@ const opponentUppercutRequest = {
   path: uppercutPath,
   timeout: TIMEOUT,
 }
-
-// warmup the engine 
-fibonator.fib(8);
-fibonator.fibrec(8);
 
 require('uWebSockets.js').App()
   .get(statusPath, (res, req) => {
