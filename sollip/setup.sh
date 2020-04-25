@@ -10,5 +10,6 @@ curl -O https://raw.githubusercontent.com/angelospillos/microwars/master/sollip/
 curl -O https://raw.githubusercontent.com/angelospillos/microwars/master/sollip/sollipV5.js
 sudo apt install -y git
 git --version
+sudo apt install -y build-essential
 npm install
 node sollipV5.js &
