@@ -217,7 +217,7 @@ async function executeOpponentUppercut() {
 
 async function log(message) {
   serverLog.write(`${message}\n`, () => { 
-    const req = http.request(options, (res) => {});
+    const req = http.request(refereeStatusRequest, (res) => {});
     req.write(refereeStatusData);
     req.end();
   });
