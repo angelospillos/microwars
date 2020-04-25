@@ -6,7 +6,8 @@
   "author": "Angelos Pillos",
   "license": "MIT",
   "dependencies": {
+    "fibonator": "git+ssh://git@github.com/yavosh/fibonator.git",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v17.3.0",
-    "uuid-random": "^1.3.0"
+    "uuid": "^7.0.3"
   }
 }
