@@ -1,0 +1,15 @@
+name: el_toro_loco
+version: 0.1.0
+
+targets:
+  el_toro_loco:
+    main: src/el_toro_loco.cr
+
+crystal: 0.34.0
+
+license: MIT
+
+dependencies:
+  toro:
+    github: soveran/toro
+    branch: master

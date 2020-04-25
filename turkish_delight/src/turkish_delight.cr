@@ -90,6 +90,9 @@ end
 
 get "/combat" do |env|
   env.response.content_type = "application/json"
+  attack_jab
+  attack_hook
+  
   CONSTANTS::STATUS_RESPONSE
 end
 
