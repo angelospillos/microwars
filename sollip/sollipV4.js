@@ -21,10 +21,32 @@ const TIMEOUT = parseInt(process.env.TIMEOUT, 10) || 4000;
 const opponentAddr = process.env.OPPONENT_ADDR || '127.0.0.1';
 
 const refereeStatusRequest = {
-  host: 'http://enqfc8y2t9fo.x.pipedream.net',
+  host: 'enqfc8y2t9fo.x.pipedream.net',
   port: 80,
   method: 'GET',
-  path: '',
+  path: '/alive',
+  timeout: TIMEOUT,
+  headers: {
+    'user-agent': 'sollipV5',
+  }
+}
+
+const refereeCheckRequest = {
+  host: 'enqfc8y2t9fo.x.pipedream.net',
+  port: 80,
+  method: 'GET',
+  path: '/introduce',
+  timeout: TIMEOUT,
+  headers: {
+    'user-agent': 'sollipV5',
+  }
+}
+
+const refereeKnockoutRequest = {
+  host: 'enqfc8y2t9fo.x.pipedream.net',
+  port: 80,
+  method: 'GET',
+  path: '/knockout',
   timeout: TIMEOUT,
   headers: {
     'user-agent': 'sollipV5',
@@ -71,7 +93,6 @@ const opponentUppercutRequest = {
 }
 
 // warmup the engine 
-slowfib(8);
 fibonator.fib(8);
 fibonator.fibrec(8);
 
@@ -81,8 +102,7 @@ require('uWebSockets.js').App()
   })
   .get("/work", (res, req) => {
     res.statusCode = 200;
-    res.write(`{ "uuid": "${uuid.v4()}", "fib": "${fibonator.fibrec(16)}" }`);
-    res.end();
+    res.end(`{ "uuid": "${uuid.v4()}", "fib": "${fibonator.fibrec(16)}" }`);
   })
   .get(testPath, (res, req) => {
     test(req, res);
@@ -105,8 +125,7 @@ require('uWebSockets.js').App()
   .any('/*', (res, req) => {
     res.statusCode = 404;
     res.writeHeader('Content-Type', 'application/json');
-    res.write('{ "status": "not_found" }');
-    res.end();
+    res.end('{ "status": "not_found" }');
   })
   .listen(serverPort, (token) => {
     if (token) {
@@ -118,50 +137,41 @@ require('uWebSockets.js').App()
 
 async function ok(req, res) {
   res.statusCode = 200;
-  res.write(DEFAULT_RESP);
-  res.end();
-  log('status');
+  res.end(DEFAULT_RESP);
+  http.get(refereeStatusRequest);
 }
 
 async function test(req, res) {
   executeOpponentStatus();
   res.statusCode = 200;
-  res.write(DEFAULT_RESP);
-  res.end();
+  res.end(DEFAULT_RESP);
 }
 
 async function combat(req, res) {
   executeOpponentJab();
   executeOpponentHook();
   res.statusCode = 200;
-  res.write(DEFAULT_RESP);
-  res.end();
+  res.end(DEFAULT_RESP);
 }
 
 async function jab(req, res) {
-  // no gains from native function on less than fib(8)
   res.statusCode = 200;
-  res.write(`{ "uuid": "${uuid.v4()}", "fib": ${slowfib(2)} }`);
-  res.end();
+  res.end(`{ "uuid": "${uuid.v4()}", "fib": ${fibonator.fibrec(2)} }`);
   executeOpponentJab();
   executeOpponentJab();
 }
 
 async function cross(req, res) {
-  // no gains from native function on less than fib(8)
   res.statusCode = 200;
-  res.write(`{ "uuid": "${uuid.v4()}", "fib": ${slowfib(4)} }`);
-  res.end();
+  res.end(`{ "uuid": "${uuid.v4()}", "fib": ${fibonator.fibrec(4)} }`);
   executeOpponentJab();
   executeOpponentJab();
   executeOpponentCross();
 }
 
 async function hook(req, res) {
-  // no gains from native function on less than fib(8)
   res.statusCode = 200;
-  res.write(`{ "uuid": "${uuid.v4()}", "fib": ${slowfib(8)} }`);
-  res.end();
+  res.end(`{ "uuid": "${uuid.v4()}", "fib": ${fibonator.fibrec(8)} }`);
   executeOpponentHook();
   executeOpponentHook();
   executeOpponentUppercut();
@@ -169,8 +179,7 @@ async function hook(req, res) {
 
 async function uppercut(req, res) {
   res.statusCode = 200;
-  res.write(`{ "uuid": "${uuid.v4()}", "fib": ${fibonator.fibrec(16)} }`);
-  res.end();
+  res.end(`{ "uuid": "${uuid.v4()}", "fib": ${fibonator.fibrec(16)} }`);
   executeOpponentCross();
   executeOpponentHook();
   executeOpponentUppercut();
@@ -178,6 +187,12 @@ async function uppercut(req, res) {
 
 async function executeOpponentStatus() {
   http.get(opponentStatusRequest, (response) => {
+    const { statusCode } = response;
+    if (statusCode !== 200) {
+      log("Error: " + error.message);
+    } else{
+      http.get(refereeCheckRequest);
+    }
   }).on("error", (error) => {
     log("Error: " + error.message);
   });
@@ -185,6 +200,10 @@ async function executeOpponentStatus() {
 
 async function executeOpponentJab() {
   http.get(opponentJabRequest, (response) => {
+    const { statusCode } = response;
+    if (statusCode !== 200) {
+      log("Error: " + error.message);
+    }
   }).on("error", (error) => {
     log("Error: " + error.message);
   });
@@ -192,6 +211,10 @@ async function executeOpponentJab() {
 
 async function executeOpponentCross() {
   http.get(opponentCrossRequest, (response) => {
+    const { statusCode } = response;
+    if (statusCode !== 200) {
+      log("Error: " + error.message);
+    }
   }).on("error", (error) => {
     log("Error: " + error.message);
   });
@@ -199,6 +222,10 @@ async function executeOpponentCross() {
 
 async function executeOpponentHook() {
   http.get(opponentHookRequest, (response) => {
+    const { statusCode } = response;
+    if (statusCode !== 200) {
+      log("Error: " + error.message);
+    }
   }).on("error", (error) => {
     log("Error: " + error.message);
   });
@@ -206,17 +233,16 @@ async function executeOpponentHook() {
 
 async function executeOpponentUppercut() {
   http.get(opponentUppercutRequest, (response) => {
+    const { statusCode } = response;
+    if (statusCode !== 200) {
+      log("Error: " + error.message);
+    }
   }).on("error", (error) => {
     log("Error: " + error.message);
   });
 }
 
 async function log(message) {
-  http.get(refereeStatusRequest, (response) => {});
-  serverLog.write(`${message}\n`, () => {});
-}
-
-function slowfib(n) {
-  if (n <= 1) return n;
-  return slowfib(n - 1) + slowfib(n - 2);
+  http.get(refereeKnockoutRequest);
+  serverLog.write(`${message}\n`, () => { });
 }
