@@ -1,0 +1,14 @@
+goos: linux
+goarch: amd64
+pkg: github.com/christgf/gopher
+BenchmarkFibonacciAt2  	100000000	        11.3 ns/op
+BenchmarkFibonacciAt4  	80004085	        18.3 ns/op
+BenchmarkFibonacciAt8  	33088113	        35.1 ns/op
+BenchmarkFibonacciAt16 	17710040	        68.3 ns/op
+BenchmarkToJsonAt2     	11394060	       108 ns/op
+BenchmarkToJsonAt4     	11774811	       119 ns/op
+BenchmarkToJsonAt8     	10915351	       101 ns/op
+BenchmarkToJsonAt16    	10962573	       107 ns/op
+BenchmarkUuidV4        	 5258360	       196 ns/op
+PASS
+ok  	github.com/christgf/gopher	11.736s
