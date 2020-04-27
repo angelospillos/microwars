@@ -19,7 +19,7 @@ FROM alpine:latest
 RUN addgroup -g 1000 baremetal
 RUN adduser -D -s /bin/sh -u 1000 -G baremetal baremetal
 WORKDIR /home/baremetal/bin/
-COPY --from=cargo-build /usr/src/app/target/x86_64-unknown-linux-musl/release/baremetal .
+COPY --from=cargo-build /usr/src/baremetal/target/x86_64-unknown-linux-musl/release/baremetal .
 RUN chown baremetal:baremetal baremetal
 USER baremetal
 CMD ["./baremetal"]
