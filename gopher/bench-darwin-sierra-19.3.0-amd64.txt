@@ -1,0 +1,14 @@
+goos: darwin
+goarch: amd64
+pkg: github.com/christgf/gopher
+BenchmarkFibonacciAt2   199113428	         6.00 ns/op
+BenchmarkFibonacciAt4   100000000	        10.3 ns/op
+BenchmarkFibonacciAt8   55622034	        20.1 ns/op
+BenchmarkFibonacciAt16  26766637	        43.4 ns/op
+BenchmarkToJsonAt2      22090898	        47.2 ns/op
+BenchmarkToJsonAt4      24425458	        50.1 ns/op
+BenchmarkToJsonAt8      25882821	        47.2 ns/op
+BenchmarkToJsonAt16     24691520	        47.3 ns/op
+BenchmarkUuidV4         13366948	        87.4 ns/op
+PASS
+ok  	github.com/christgf/gopher	11.449s
