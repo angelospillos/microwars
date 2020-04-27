@@ -5,6 +5,8 @@
 # multi-stage build feature. This also leverages the docker build cache to avoid
 # re-downloading dependencies if they have not changed.
 FROM rust:latest as cargo-build
+RUN apt-get update
+RUN apt-get install musl-tools -y
 WORKDIR /usr/src
 # Download the target for static linking.
 RUN rustup target add x86_64-unknown-linux-musl
