@@ -114,8 +114,7 @@ func getDaRef(url string, path string) {
 }
 
 func getYourRoarOn(url string, callref bool) error {
-	fmt.Print("Hit me baby, ", url, "\n")
-	punchesTaken.With(prometheus.Labels{
+	punchesGiven.With(prometheus.Labels{
 		"punchType": url,
 	}).Inc()
 
