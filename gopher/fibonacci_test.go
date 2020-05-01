@@ -16,6 +16,7 @@ func TestFibonacciAt(t *testing.T) {
 		{f: 4, e: 3},
 		{f: 8, e: 21},
 		{f: 16, e: 987},
+		{f: 32, e: 15621},
 	}
 	for _, tc := range tt {
 		r := fibonacciAt(tc.f)
@@ -38,6 +39,10 @@ func BenchmarkFibonacciAt8(b *testing.B) {
 }
 
 func BenchmarkFibonacciAt16(b *testing.B) {
+	benchmarkFibonacciAt(b, 16)
+}
+
+func BenchmarkFibonacciAt32(b *testing.B) {
 	benchmarkFibonacciAt(b, 16)
 }
 

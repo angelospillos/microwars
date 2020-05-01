@@ -2,22 +2,54 @@ package main
 
 import (
 	"github.com/valyala/fasthttp"
+	"log"
 	"time"
 )
 
-var contentTypeJson = []byte("application/json")
+const (
+	pathStatus   = "/status"
+	pathTest     = "/test"
+	pathCombat   = "/combat"
+	pathJab      = "/jab"
+	pathCross    = "/cross"
+	pathHook     = "/hook"
+	pathUppercut = "/uppercut"
+	pathWork     = "/work"
+)
+
+var (
+	contentTypeJson = []byte("application/json")
+	responseOK      = []byte(`{"status":"ok"}`)
+)
 
 func handlerFunc(ctx *fasthttp.RequestCtx) {
-	resp := &ctx.Response
-	resp.Header.SetContentTypeBytes(contentTypeJson)
-	resp.Header.SetStatusCode(fasthttp.StatusOK)
+	ctx.Response.Header.SetContentTypeBytes(contentTypeJson)
+	ctx.Response.Header.SetStatusCode(fasthttp.StatusOK)
 	p := string(ctx.Path())
 	switch p {
-	case "/status":
-		resp.SetBody([]byte(`{ "status": "ok" }`))
+	case pathStatus:
+		ctx.Response.SetBody(responseOK)
 		return
-	case "/work":
-		resp.SetBody(toJson(uuidV4(), fibonacciAt(20)))
+	case pathTest:
+		ctx.Response.SetBody(responseOK)
+		return
+	case pathCombat:
+		ctx.Response.SetBody(responseOK)
+		return
+	case pathJab:
+		ctx.Response.SetBody(toJson(uuidV4(), fibonacciAt(2)))
+		return
+	case pathCross:
+		ctx.Response.SetBody(toJson(uuidV4(), fibonacciAt(4)))
+		return
+	case pathHook:
+		ctx.Response.SetBody(toJson(uuidV4(), fibonacciAt(8)))
+		return
+	case pathUppercut:
+		ctx.Response.SetBody(toJson(uuidV4(), fibonacciAt(16)))
+		return
+	case pathWork:
+		ctx.Response.SetBody(toJson(uuidV4(), fibonacciAt(32 /* really unhappy FormatUint */)))
 		return
 	}
 	ctx.Error("404 page not found", fasthttp.StatusNotFound) // should Reset()
@@ -38,5 +70,6 @@ func main() {
 		NoDefaultDate:                 true,
 		DisableHeaderNamesNormalizing: true,
 	}
-	_ = server.ListenAndServe(listenAddr)
+	log.Printf("Listening on %s", listenAddr)
+	log.Fatal(server.ListenAndServe(listenAddr))
 }
