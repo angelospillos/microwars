@@ -32,7 +32,7 @@ func TestToJson(t *testing.T) {
 	}
 }
 
-var benchUuid = []uint8("9566c74d-1003-4c4d-bbbb-0407d1e2c649")
+var benchUuid = []byte("9566c74d-1003-4c4d-bbbb-0407d1e2c649")
 
 func BenchmarkToJsonAt2(b *testing.B) {
 	benchmarkToJsonAt(b, 2)

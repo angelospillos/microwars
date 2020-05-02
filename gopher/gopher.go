@@ -2,31 +2,20 @@ package main
 
 import (
 	"github.com/valyala/fasthttp"
+	"log"
 	"time"
 )
 
-var contentTypeJson = []byte("application/json")
+const workerCount = 256 //todo as flag
 
-func handlerFunc(ctx *fasthttp.RequestCtx) {
-	resp := &ctx.Response
-	resp.Header.SetContentTypeBytes(contentTypeJson)
-	resp.Header.SetStatusCode(fasthttp.StatusOK)
-	p := string(ctx.Path())
-	switch p {
-	case "/status":
-		resp.SetBody([]byte(`{ "status": "ok" }`))
-		return
-	case "/work":
-		resp.SetBody(toJson(uuidV4(), fibonacciAt(20)))
-		return
-	}
-	ctx.Error("404 page not found", fasthttp.StatusNotFound) // should Reset()
-}
+var pipelineC = make(chan string /* no buffering: thrashing over blocking */)
 
 func main() {
-	listenAddr := ":9090"
+	listenAddr := getEnv("LISTEN_ADDR", ":9090")
+	targetAddr := requireEnv("TARGET_ADDR")
+	router := &mux{callbackC: pipelineC}
 	server := &fasthttp.Server{
-		Handler:                       handlerFunc,
+		Handler:                       router.handlerFunc,
 		ReadBufferSize:                1024,
 		WriteBufferSize:               512,
 		ReadTimeout:                   4 * time.Second,
@@ -38,5 +27,30 @@ func main() {
 		NoDefaultDate:                 true,
 		DisableHeaderNamesNormalizing: true,
 	}
-	_ = server.ListenAndServe(listenAddr)
+	client := &fasthttp.Client{
+		NoDefaultUserAgentHeader:      true,
+		MaxConnsPerHost:               1024,
+		MaxIdemponentCallAttempts:     2,
+		MaxResponseBodySize:           1024,
+		ReadBufferSize:                1024,
+		WriteBufferSize:               512,
+		ReadTimeout:                   4 * time.Second,
+		WriteTimeout:                  4 * time.Second,
+		MaxConnWaitTimeout:            8 * time.Second,
+		MaxIdleConnDuration:           8 * time.Second,
+		DisableHeaderNamesNormalizing: true,
+		DisablePathNormalizing:        true,
+	}
+	workers := &workerPool{
+		workRequestC: pipelineC,
+		workHandleFunc: func(requestPath string) error {
+			return doDeadlineGET(client, targetAddr+requestPath)
+		},
+	}
+
+	log.Printf("Using %d background workers", workerCount)
+	workers.poolInit(workerCount)
+
+	log.Printf("Listening on %s", listenAddr)
+	log.Fatal(server.ListenAndServe(listenAddr))
 }
