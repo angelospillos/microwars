@@ -43,7 +43,7 @@ func BenchmarkFibonacciAt16(b *testing.B) {
 }
 
 func BenchmarkFibonacciAt32(b *testing.B) {
-	benchmarkFibonacciAt(b, 16)
+	benchmarkFibonacciAt(b, 32)
 }
 
 func benchmarkFibonacciAt(b *testing.B, n uint16) {
