@@ -7,5 +7,5 @@ require (
 	github.com/gofiber/recover v0.0.3
 	github.com/google/uuid v1.1.1
 	github.com/prometheus/client_golang v1.6.0
-	github.com/valyala/fasthttp v1.12.0
+	github.com/valyala/fasthttp v1.34.0 // indirect
 )
